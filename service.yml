@@ -1,0 +1,73 @@
+name: support
+display_name: "Техническая поддержка"
+version: "1.0.0"
+description: "Сервис технической поддержки пользователей на базе Zammad"
+maintainer: "support@openedu.urfu.ru"
+repository: "https://github.com/urfu/apps-service-opus/tree/main/services/public/support"
+tags:
+  - helpdesk
+  - production
+
+type: docker-compose
+visibility: public
+
+routing:
+  - type: domain
+    domain: help.openedu.urfu.ru
+    internal_port: 80
+  - type: domain
+    domain: help.urfu.online
+    internal_port: 80
+
+health:
+  enabled: true
+  endpoint: /api/v1/status
+  interval: 30s
+  timeout: 10s
+  retries: 3
+
+resources:
+  memory_limit: 6Gi
+  cpu_limit: 3.0
+
+backup:
+  enabled: true
+  schedule: "0 2 * * *"
+  retention: 7
+  paths:
+    - ./data/zammad
+  databases:
+    - type: postgres
+      container: postgres
+      database: zammad
+    - type: elasticsearch
+      container: elasticsearch
+      indices:
+        - zammad_*
+
+logging:
+  driver: loki
+  labels:
+    - service=support
+
+dependencies:
+  external:
+    - keycloak
+    - mail
+
+environment:
+  RAILS_ENV: production
+  LOG_LEVEL: info
+
+hooks:
+  post_deploy:
+    - "./scripts/init.sh"
+  pre_backup:
+    - "./scripts/prepare-backup.sh"
+
+notifications:
+  telegram: true
+  events:
+    - deploy
+    - error
+    - health_fail

@@ -1,0 +1,199 @@
+version: '3.8'
+
+services:
+  # =============================================================================
+  # Zammad Web - основной веб-интерфейс и API
+  # =============================================================================
+  zammad-web:
+    image: zammad/zammad:7
+    container_name: support-zammad-web
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
+    environment:
+      - RAILS_ENV=production
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-zammad}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-zammad}
+      - REDIS_URL=${REDIS_URL:-redis://redis:6379}
+      - ES_URL=${ES_URL:-http://elasticsearch:9200}
+      - ZAMMAD_RAILS_SECRET=${ZAMMAD_RAILS_SECRET}
+      - ZAMMAD_SESSION_SECRET=${ZAMMAD_SESSION_SECRET}
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+    volumes:
+      - zammad_data:/opt/zammad
+      - ./logs/zammad:/opt/zammad/log:rw
+    networks:
+      - platform
+    labels:
+      - "platform.service=support"
+      - "platform.visibility=public"
+      - "prometheus.scrape=true"
+      - "prometheus.port=80"
+      - "prometheus.path=/metrics"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/api/v1/status"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    deploy:
+      resources:
+        limits:
+          memory: 2Gi
+          cpus: '1.0'
+
+  # =============================================================================
+  # Zammad Worker - фоновые задачи (email, уведомления, отчёты)
+  # =============================================================================
+  zammad-worker:
+    image: zammad/zammad:7
+    container_name: support-zammad-worker
+    restart: unless-stopped
+    command: zammad-worker
+    depends_on:
+      - zammad-web
+    environment:
+      - RAILS_ENV=production
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-zammad}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-zammad}
+      - REDIS_URL=${REDIS_URL:-redis://redis:6379}
+      - ES_URL=${ES_URL:-http://elasticsearch:9200}
+      - ZAMMAD_RAILS_SECRET=${ZAMMAD_RAILS_SECRET}
+      - ZAMMAD_SESSION_SECRET=${ZAMMAD_SESSION_SECRET}
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+    volumes:
+      - zammad_data:/opt/zammad
+      - ./logs/zammad-worker:/opt/zammad/log:rw
+    networks:
+      - platform
+    healthcheck:
+      test: ["CMD", "pgrep", "-f", "zammad-worker"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          memory: 1Gi
+          cpus: '0.5'
+
+  # =============================================================================
+  # PostgreSQL - основное хранилище данных
+  # =============================================================================
+  postgres:
+    image: postgres:15-alpine
+    container_name: support-postgres
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER:-zammad}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB:-zammad}
+      - POSTGRES_INITDB_ARGS=--encoding=UTF8 --lc-collate=C --lc-ctype=C
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./data/postgres/init:/docker-entrypoint-initdb.d:ro
+    networks:
+      - platform
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-zammad} -d ${POSTGRES_DB:-zammad}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    deploy:
+      resources:
+        limits:
+          memory: 1Gi
+          cpus: '0.5'
+
+  # =============================================================================
+  # Redis - кэш и очереди
+  # =============================================================================
+  redis:
+    image: redis:7-alpine
+    container_name: support-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis_data:/data
+    networks:
+      - platform
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+    deploy:
+      resources:
+        limits:
+          memory: 512Mi
+          cpus: '0.25'
+
+  # =============================================================================
+  # Elasticsearch - полнотекстовый поиск и отчёты
+  # =============================================================================
+  elasticsearch:
+    image: elasticsearch:8.11.0
+    container_name: support-elasticsearch
+    restart: unless-stopped
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - xpack.security.enrollment.enabled=false
+      - xpack.watcher.enabled=false
+      - xpack.graph.enabled=false
+      - xpack.ml.enabled=false
+      - "ES_JAVA_OPTS=-Xms2g -Xmx2g"
+      - "cluster.routing.allocation.disk.threshold_enabled=false"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+      - ./config/elasticsearch/jvm.options:/usr/share/elasticsearch/config/jvm.options:ro
+    networks:
+      - platform
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:9200/_cluster/health | grep -q '\"status\":\"green\"\\|\"status\":\"yellow\"'"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    deploy:
+      resources:
+        limits:
+          memory: 2Gi
+          cpus: '1.0'
+
+volumes:
+  zammad_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./data/zammad
+  postgres_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./data/postgres
+  redis_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./data/redis
+  elasticsearch_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./data/elasticsearch
+
+networks:
+  platform:
+    external: true
+    name: platform_network

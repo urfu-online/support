@@ -1,0 +1,42 @@
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Secrets
+*.pem
+*.key
+*.crt
+secrets/
+
+# Data directories
+data/postgres/
+data/redis/
+data/elasticsearch/
+data/zammad/
+
+# Logs
+logs/*.log
+logs/*.json
+
+# Docker
+*.tar
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Backup
+backups/
+*.sql
+*.gz
+
+# Testing
+coverage/
+.tmp/

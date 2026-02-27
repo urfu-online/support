@@ -1,0 +1,30 @@
+# Лицензия
+
+Zammad является open-source продуктом под лицензией GNU AFFERO General Public License v3.0.
+
+## Zammad License
+
+- **URL**: https://github.com/zammad/zammad/blob/develop/LICENSE
+- **License**: AGPL-3.0
+
+## Сторонние компоненты
+
+### PostgreSQL
+- **License**: PostgreSQL License (BSD-like)
+- **URL**: https://www.postgresql.org/about/licence/
+
+### Redis
+- **License**: BSD 3-Clause
+- **URL**: https://github.com/redis/redis/blob/unstable/COPYING
+
+### Elasticsearch
+- **License**: Elastic License v2 / SSPL
+- **URL**: https://www.elastic.co/licensing/elastic-license
+
+## Конфигурация сервиса
+
+Данный сервис является частью платформы apps-service-opus и распространяется в соответствии с лицензией основного проекта.
+
+---
+
+Для коммерческого использования Zammad обратитесь к: https://zammad.com/en/pricing

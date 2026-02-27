@@ -1,0 +1,33 @@
+## JVM configuration for Elasticsearch
+## Optimized for Zammad deployment
+
+# Heap size - do not exceed 50% of available RAM, max 32GB
+-Xms2g
+-Xmx2g
+
+# Use G1 GC for better performance
+-XX:+UseG1GC
+
+# G1 GC settings
+-XX:G1ReservePercent=25
+-XX:InitiatingHeapOccupancyPercent=30
+
+# Disable explicit GC calls
+-XX:+DisableExplicitGC
+
+# Heap dump on OOM
+-XX:+HeapDumpOnOutOfMemoryError
+-XX:HeapDumpPath=/usr/share/elasticsearch/logs
+
+# Log GC
+-Xlog:gc*,gc+age=trace,safepoint:file=/usr/share/elasticsearch/logs/gc.log:utctime,pid,tags:filecount=32,filesize=64m
+
+# Temp directory
+-Djava.io.tmpdir=/usr/share/elasticsearch/temp
+
+# Network settings
+-Djava.net.preferIPv4Stack=true
+
+# Locale
+-Dfile.encoding=UTF-8
+-Dsun.jnu.encoding=UTF-8
