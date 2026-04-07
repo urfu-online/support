@@ -90,6 +90,7 @@ services/public/support/
 ├── docker-compose.yml          # Оркестрация контейнеров
 ├── service.yml                 # Конфигурация платформы
 ├── .env.example                # Шаблон переменных окружения
+├── .dockerignore               # Исключения для Docker
 ├── README.md                   # Этот файл
 ├── docs/                       # Документация
 │   ├── ARCHITECTURE.md
@@ -98,17 +99,19 @@ services/public/support/
 │   └── MAINTENANCE.md
 ├── config/                     # Конфигурация
 │   └── elasticsearch/
-│       └── jvm.options         # Настройки памяти ES
+│       └── jvm.options         # Настройки памяти ES (1.5Gi heap)
 ├── scripts/                    # Скрипты обслуживания
 │   ├── init.sh                 # Инициализация
-│   ├── backup.sh               # Бэкап
-│   └── restore.sh              # Восстановление
+│   ├── init-secrets.sh         # Генерация секретов
+│   ├── prepare-backup.sh       # Подготовка к бэкапу
+│   ├── restore.sh              # Восстановление
+│   └── validate.sh             # Валидация конфигурации
 ├── data/                       # Постоянные данные (volume)
 │   ├── postgres/
 │   ├── redis/
 │   ├── elasticsearch/
 │   └── zammad/
-└── logs/                       # Логи
+└── logs/                       # Логи (ротация: 100МБ/3 файла)
 ```
 
 ## 🔧 Конфигурация
@@ -127,14 +130,14 @@ services/public/support/
 
 ### Ресурсы
 
-| Компонент | CPU | RAM |
-|-----------|-----|-----|
-| Zammad Web | 1.0 | 2 ГБ |
-| Zammad Worker | 0.5 | 1 ГБ |
-| PostgreSQL | 0.5 | 1 ГБ |
-| Redis | 0.25 | 512 МБ |
-| Elasticsearch | 1.0 | 2 ГБ |
-| **Итого** | **3.25** | **6.5 ГБ** |
+| Компонент | CPU | RAM | Примечание |
+|-----------|-----|-----|------------|
+| Zammad Web | 1.0 | 2 ГБ | |
+| Zammad Worker | 0.5 | 1 ГБ | |
+| PostgreSQL | 0.5 | 1 ГБ | |
+| Redis | 0.25 | 512 МБ | maxmemory: 256 МБ |
+| Elasticsearch | 1.0 | 2 ГБ | heap: 1.5 ГБ |
+| **Итого** | **3.25** | **6.5 ГБ** | ES heap оптимизирован |
 
 ## 🔗 Интеграции
 
@@ -159,20 +162,21 @@ services/public/support/
 
 ### Health Check
 
-- Endpoint: `/health`
+- Endpoint: `/api/v1/status`
 - Interval: 30s
 - Timeout: 10s
 - Retries: 3
 
 ### Метрики Prometheus
 
-- Port: 3000
+- Port: 80
 - Path: `/metrics`
 
 ### Логи
 
 - Driver: `loki`
 - Labels: `service=support`, `component=*`
+- Ротация: 100 МБ / 3 файла
 
 ## 🆘 Поддержка
 

@@ -8,7 +8,8 @@
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-cd "$SCRIPT_DIR"
+SERVICE_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+cd "$SERVICE_DIR"
 
 # Проверка аргумента
 if [ -z "$1" ]; then
@@ -38,31 +39,51 @@ docker compose down
 # Восстановление PostgreSQL
 echo "[*] Восстановление PostgreSQL..."
 if [ -f "$BACKUP_DIR/zammad_db.sql" ]; then
+    # Запуск PostgreSQL
+    docker compose up -d postgres
+    sleep 5
+
     # Очистка существующей БД
-    docker compose run --rm postgres dropdb -U zammad zammad 2>/dev/null || true
-    docker compose run --rm postgres createdb -U zammad zammad
-    
-    # Импорт дампа
-    cat "$BACKUP_DIR/zammad_db.sql" | docker compose exec -T postgres psql -U zammad zammad
-    echo "[+] PostgreSQL восстановлен"
+    docker compose exec -T postgres dropdb -U zammad -h localhost zammad 2>/dev/null || true
+    docker compose exec -T postgres createdb -U zammad -h localhost zammad 2>/dev/null || true
+
+    # Импорт дампа с проверкой
+    if cat "$BACKUP_DIR/zammad_db.sql" | docker compose exec -T postgres psql -U zammad -h localhost zammad; then
+        echo "[+] PostgreSQL восстановлен"
+    else
+        echo "[!] Ошибка восстановления PostgreSQL"
+        exit 1
+    fi
 else
     echo "[!] Файл дампа не найден: $BACKUP_DIR/zammad_db.sql"
+    exit 1
 fi
 
 # Восстановление файлов Zammad
 echo "[*] Восстановление файлов Zammad..."
 if [ -d "$BACKUP_DIR/zammad_files" ]; then
-    rsync -a --delete "$BACKUP_DIR/zammad_files/" ./data/zammad/
-    echo "[+] Файлы Zammad восстановлены"
+    if rsync -a --delete "$BACKUP_DIR/zammad_files/" ./data/zammad/; then
+        echo "[+] Файлы Zammad восстановлены"
+    else
+        echo "[!] Ошибка восстановления файлов Zammad"
+        exit 1
+    fi
 else
     echo "[!] Директория с файлами не найдена: $BACKUP_DIR/zammad_files"
+    exit 1
 fi
 
 # Восстановление Elasticsearch (пересоздание индексов)
 echo "[*] Очистка индексов Elasticsearch..."
 docker compose up -d elasticsearch
 sleep 10
-curl -X DELETE "http://localhost:9200/zammad_*" 2>/dev/null || true
+
+# Очистка индексов через контейнер, а не через localhost
+if docker compose exec -T elasticsearch curl -sf -X DELETE "http://localhost:9200/zammad_*"; then
+    echo "[+] Индексы Elasticsearch очищены"
+else
+    echo "[!] Ошибка очистки индексов Elasticsearch (не критично)"
+fi
 
 # Запуск сервиса
 echo "[*] Запуск сервиса..."

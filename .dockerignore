@@ -1,0 +1,38 @@
+# Environment & Secrets
+.env
+.env.local
+.env.*.local
+
+# Documentation
+*.md
+docs/
+.qwen/
+
+# Git
+.git
+.gitignore
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+
+# Data (не должны попадать в образ)
+data/
+
+# Backup
+backups/
+*.sql
+*.gz
+
+# Testing
+coverage/
+.tmp/

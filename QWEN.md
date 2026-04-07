@@ -31,6 +31,10 @@
 
 **Итого**: 3.25 CPU / 6.5Gi RAM
 
+> **Примечание:** Heap Elasticsearch уменьшен до 1.5Gi (1536m) для укладывания в общий лимит 6Gi.
+> Окружение сервисов Zammad вынесено в `x-zammad-common` (DRY принцип).
+> Добавлена ротация логов для всех контейнеров.
+
 ### Схема архитектуры
 
 ```
@@ -68,6 +72,7 @@ services/public/support/
 ├── docker-compose.yml          # Оркестрация контейнеров
 ├── service.yml                 # Конфигурация платформы
 ├── .env.example                # Шаблон переменных окружения
+├── .dockerignore               # Исключения для Docker
 ├── .env                        # Переменные окружения (игнорируется)
 ├── README.md                   # Основная документация
 ├── QWEN.md                     # Этот файл — контекст для AI
@@ -78,12 +83,13 @@ services/public/support/
 │   └── MAINTENANCE.md          # Обслуживание и мониторинг
 ├── config/                     # Конфигурация компонентов
 │   └── elasticsearch/
-│       └── jvm.options         # Настройки памяти ES (-Xms2g -Xmx2g)
+│       └── jvm.options         # Настройки памяти ES (-Xms1536m -Xmx1536m)
 ├── scripts/                    # Скрипты обслуживания
 │   ├── init-secrets.sh         # Генерация безопасных секретов
 │   ├── init.sh                 # Инициализация сервиса
 │   ├── prepare-backup.sh       # Подготовка к бэкапу
-│   └── restore.sh              # Восстановление из бэкапа
+│   ├── restore.sh              # Восстановление из бэкапа
+│   └── validate.sh             # Валидация конфигурации
 ├── data/                       # Постоянные данные (volume)
 │   ├── postgres/
 │   ├── redis/
@@ -242,7 +248,8 @@ curl -f http://localhost:3000/api/v1/status
 
 ### Elasticsearch Heap
 Heap size не должен превышать 50% доступной RAM и не более 32 ГБ (compressed oops).
-Текущая настройка: `-Xms2g -Xmx2g` (файл `config/elasticsearch/jvm.options`)
+Текущая настройка: `-Xms1536m -Xmx1536m` (файл `config/elasticsearch/jvm.options`)
+Уменьшено с 2g до 1.5g для укладывания в общий лимит 6Gi.
 
 ### Сетевая безопасность
 - Все сервисы изолированы в `platform_network`

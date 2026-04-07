@@ -1,9 +1,11 @@
 ## JVM configuration for Elasticsearch
 ## Optimized for Zammad deployment
 
-# Heap size - do not exceed 50% of available RAM, max 32GB
--Xms2g
--Xmx2g
+# Heap size - reduced to fit within 6Gi service limit
+# Total: zammad-web(2Gi) + worker(1Gi) + postgres(1Gi) + redis(512Mi) + es(2Gi) = 6.5Gi
+# ES heap: 1.5Gi (sufficient for <100K documents)
+-Xms1536m
+-Xmx1536m
 
 # Use G1 GC for better performance
 -XX:+UseG1GC
