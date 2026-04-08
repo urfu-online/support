@@ -16,6 +16,7 @@ x-zammad-common: &zammad-common
     - POSTGRESQL_PASS=${POSTGRES_PASSWORD}
     - POSTGRESQL_DB=${POSTGRES_DB:-zammad}
     - POSTGRESQL_DB_CREATE=true
+    - RAILS_MAX_THREADS=10
     - REDIS_URL=${REDIS_URL:-redis://redis:6379}
     - ES_URL=${ES_URL:-http://elasticsearch:9200}
     - ELASTICSEARCH_HOST=elasticsearch
@@ -83,7 +84,7 @@ services:
       - "prometheus.port=3000"
       - "prometheus.path=/metrics"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/api/v1/status"]
+      test: ["CMD-SHELL", "curl -sf http://localhost:3000/ > /dev/null 2>&1 || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 3
