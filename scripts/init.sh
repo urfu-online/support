@@ -6,7 +6,8 @@
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-cd "$SCRIPT_DIR"
+SERVICE_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+cd "$SERVICE_DIR"
 
 echo "=== Инициализация сервиса Support ==="
 
@@ -32,12 +33,12 @@ fi
 
 # Создание директорий для данных
 echo "[*] Создание директорий для данных..."
-mkdir -p data/postgres/data data/postgres/init
-mkdir -p data/redis/data
-mkdir -p data/elasticsearch/data
-mkdir -p data/zammad/data
-mkdir -p logs/{zammad,zammad-worker}
-chmod -R 755 data logs
+mkdir -p "$SERVICE_DIR"/data/postgres/data "$SERVICE_DIR"/data/postgres/init
+mkdir -p "$SERVICE_DIR"/data/redis/data
+mkdir -p "$SERVICE_DIR"/data/elasticsearch/data
+mkdir -p "$SERVICE_DIR"/data/zammad/data
+mkdir -p "$SERVICE_DIR"/logs/zammad "$SERVICE_DIR"/logs/zammad-worker
+chmod -R 755 "$SERVICE_DIR"/data "$SERVICE_DIR"/logs
 
 # Проверка network
 echo "[*] Проверка platform_network..."
