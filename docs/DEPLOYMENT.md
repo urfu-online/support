@@ -27,7 +27,10 @@
 ```bash
 cd /apps/services/public/support
 
-# Инициализировать секреты
+# Инициализировать сервис (создаст директории, .env, сеть)
+./scripts/init.sh
+
+# Сгенерировать секреты
 ./scripts/init-secrets.sh
 
 # Проверить конфигурацию
@@ -345,6 +348,28 @@ docker compose config
 docker network inspect platform_network
 ```
 
+### Первый запуск не удался — повторная инициализация
+
+Если первый запуск провалился (ошибки PostgreSQL, Elasticsearch и т.д.):
+
+```bash
+cd /apps/services/public/support
+
+# 1. Остановить и удалить контейнеры + volumes
+docker compose down -v
+
+# 2. Очистить директории данных
+rm -rf data/postgres/data/* data/redis/data/* data/elasticsearch/data/* data/zammad/data/*
+
+# 3. Перегенерировать секреты
+./scripts/init-secrets.sh
+
+# 4. Запустить заново
+ops up support
+```
+
+> ⚠️ **Внимание**: это удалит все данные сервиса. Выполняйте только при первом запуске или если данные не важны.
+
 ### Ошибка подключения к PostgreSQL
 
 ```bash
@@ -355,8 +380,8 @@ docker compose exec postgres pg_isready -U zammad
 docker compose exec postgres env | grep POSTGRES
 
 # Пересоздать БД
-docker compose down
-rm -rf data/postgres
+docker compose down -v
+rm -rf data/postgres/data/*
 docker compose up -d postgres
 ```
 

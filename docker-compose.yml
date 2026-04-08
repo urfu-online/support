@@ -16,7 +16,7 @@ x-zammad-common: &zammad-common
     - ZAMMAD_SESSION_SECRET=${ZAMMAD_SESSION_SECRET}
     - LOG_LEVEL=${LOG_LEVEL:-info}
   volumes:
-    - zammad_data:/opt/zammad
+    - ./data/zammad/data:/opt/zammad
   networks:
     - platform
   logging:
@@ -40,7 +40,7 @@ services:
       elasticsearch:
         condition: service_healthy
     volumes:
-      - zammad_data:/opt/zammad
+      - ./data/zammad/data:/opt/zammad
       - ./logs/zammad:/opt/zammad/log:rw
     labels:
       - "platform.service=support"
@@ -70,7 +70,7 @@ services:
     depends_on:
       - zammad-web
     volumes:
-      - zammad_data:/opt/zammad
+      - ./data/zammad/data:/opt/zammad
       - ./logs/zammad-worker:/opt/zammad/log:rw
     healthcheck:
       test: ["CMD-SHELL", "pgrep -f 'sidekiq' > /dev/null 2>&1 || zammad execute System::StatusCheck 2>/dev/null"]
@@ -97,7 +97,7 @@ services:
       - POSTGRES_DB=${POSTGRES_DB:-zammad}
       - POSTGRES_INITDB_ARGS=--encoding=UTF8 --lc-collate=C --lc-ctype=C
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - ./data/postgres/data:/var/lib/postgresql/data
       - ./data/postgres/init:/docker-entrypoint-initdb.d:ro
     networks:
       - platform
@@ -127,7 +127,7 @@ services:
     restart: unless-stopped
     command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
     volumes:
-      - redis_data:/data
+      - ./data/redis/data:/data
     networks:
       - platform
     logging:
@@ -163,8 +163,9 @@ services:
       - xpack.ml.enabled=false
       - "ES_JAVA_OPTS=-Xms1536m -Xmx1536m"
       - "cluster.routing.allocation.disk.threshold_enabled=false"
+      - "TMPDIR=/tmp"
     volumes:
-      - elasticsearch_data:/usr/share/elasticsearch/data
+      - ./data/elasticsearch/data:/usr/share/elasticsearch/data
       - ./config/elasticsearch/jvm.options:/usr/share/elasticsearch/config/jvm.options:ro
     networks:
       - platform
@@ -184,32 +185,6 @@ services:
         limits:
           memory: 2g
           cpus: '1.0'
-
-volumes:
-  zammad_data:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ./data/zammad
-  postgres_data:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ./data/postgres
-  redis_data:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ./data/redis
-  elasticsearch_data:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ./data/elasticsearch
 
 networks:
   platform:

@@ -32,7 +32,10 @@ fi
 
 # Создание директорий для данных
 echo "[*] Создание директорий для данных..."
-mkdir -p data/{postgres,redis,elasticsearch,zammad}
+mkdir -p data/postgres/data data/postgres/init
+mkdir -p data/redis/data
+mkdir -p data/elasticsearch/data
+mkdir -p data/zammad/data
 mkdir -p logs/{zammad,zammad-worker}
 chmod -R 755 data logs
 
