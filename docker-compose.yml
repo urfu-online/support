@@ -164,6 +164,7 @@ services:
       - "ES_JAVA_OPTS=-Xms1536m -Xmx1536m"
       - "cluster.routing.allocation.disk.threshold_enabled=false"
       - "TMPDIR=/tmp"
+      - "ES_TMPDIR=/tmp"
     volumes:
       - ./data/elasticsearch/data:/usr/share/elasticsearch/data
       - ./config/elasticsearch/jvm.options:/usr/share/elasticsearch/config/jvm.options:ro
