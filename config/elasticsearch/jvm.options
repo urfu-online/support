@@ -25,7 +25,7 @@
 -Xlog:gc*,gc+age=trace,safepoint:file=/usr/share/elasticsearch/logs/gc.log:utctime,pid,tags:filecount=32,filesize=64m
 
 # Temp directory
--Djava.io.tmpdir=/usr/share/elasticsearch/temp
+-Djava.io.tmpdir=/tmp
 
 # Network settings
 -Djava.net.preferIPv4Stack=true
