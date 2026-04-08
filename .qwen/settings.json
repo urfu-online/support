@@ -9,7 +9,9 @@
       "Bash(curl *)",
       "Bash(git commit *)",
       "Bash(grep *)",
-      "Bash(git push *)"
+      "Bash(git push *)",
+      "Bash(find *)",
+      "Bash(docker volume *)"
     ]
   },
   "$version": 3
