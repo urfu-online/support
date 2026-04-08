@@ -9,7 +9,7 @@ x-zammad-common: &zammad-common
   restart: unless-stopped
   environment:
     - RAILS_ENV=production
-    - DATABASE_URL=postgresql://${POSTGRES_USER:-zammad}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-zammad}
+    - DATABASE_URL=postgresql://${POSTGRES_USER:-zammad}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-zammad}?pool=25
     - POSTGRESQL_HOST=postgres
     - POSTGRESQL_PORT=5432
     - POSTGRESQL_USER=${POSTGRES_USER:-zammad}
