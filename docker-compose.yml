@@ -10,6 +10,12 @@ x-zammad-common: &zammad-common
   environment:
     - RAILS_ENV=production
     - DATABASE_URL=postgresql://${POSTGRES_USER:-zammad}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-zammad}
+    - POSTGRESQL_HOST=postgres
+    - POSTGRESQL_PORT=5432
+    - POSTGRESQL_USER=${POSTGRES_USER:-zammad}
+    - POSTGRESQL_PASS=${POSTGRES_PASSWORD}
+    - POSTGRESQL_DB=${POSTGRES_DB:-zammad}
+    - POSTGRESQL_DB_CREATE=true
     - REDIS_URL=${REDIS_URL:-redis://redis:6379}
     - ES_URL=${ES_URL:-http://elasticsearch:9200}
     - ZAMMAD_RAILS_SECRET=${ZAMMAD_RAILS_SECRET}
