@@ -184,7 +184,7 @@ ES_URL=http://elasticsearch:9200
 
 # Keycloak (внешний)
 KEYCLOAK_URL=https://openedu.urfu.ru/auth
-KEYCLOAK_REALM=urfu
+KEYCLOAK_REALM=master
 KEYCLOAK_CLIENT_ID=zammad-help
 
 # Email (входящий)
@@ -348,7 +348,7 @@ curl -X POST https://help.openedu.urfu.ru/api/v1/channels_oidc \
   -H "Authorization: Bearer <token>" \
   -d '{
     "name": "Keycloak URFU",
-    "issuer": "https://openedu.urfu.ru/auth/realms/urfu",
+    "issuer": "https://openedu.urfu.ru/auth/realms/master",
     "client_id": "zammad-help",
     "client_secret": "<secret>",
     "scope": "openid email profile",

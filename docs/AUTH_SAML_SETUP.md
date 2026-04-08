@@ -22,7 +22,7 @@ https://help.openedu.urfu.ru/auth/saml/metadata
 
 ## Часть 2. Keycloak — создание SAML-клиента
 
-**URL:** `https://openedu.urfu.ru/auth/admin/` → realm **`urfu`**
+**URL:** `https://openedu.urfu.ru/auth/admin/` → realm **`master`**
 
 ### Шаг 1. Создать клиент
 
@@ -128,7 +128,7 @@ https://help.openedu.urfu.ru/auth/saml/metadata
 | Поле | Значение |
 |------|----------|
 | **Display name** | `Keycloak URFU` (текст кнопки на странице входа) |
-| **IDP SSO target URL** | `https://openedu.urfu.ru/auth/realms/urfu/protocol/saml/clients/zammad-help` |
+| **IDP SSO target URL** | `https://openedu.urfu.ru/auth/realms/master/protocol/saml/clients/zammad-help` |
 | **IDP certificate** | *(вставь сертификат из шага 2.4)* |
 | **Name identifier format** | `urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress` |
 | **UID attribute name** | *(пусто)* |
@@ -152,7 +152,7 @@ curl -s -X POST https://help.openedu.urfu.ru/api/v1/channels_saml \
   -H "Content-Type: application/json" \
   -d '{
     "name": "Keycloak URFU",
-    "idp_sso_target_url": "https://openedu.urfu.ru/auth/realms/urfu/protocol/saml/clients/zammad-help",
+    "idp_sso_target_url": "https://openedu.urfu.ru/auth/realms/master/protocol/saml/clients/zammad-help",
     "idp_certificate": "<СЕРТИФИКАТ_БЕЗ_ОБЁРТОК>",
     "name_identifier_format": "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress",
     "ssl_verify": true,
@@ -170,7 +170,7 @@ curl -sf https://help.openedu.urfu.ru/auth/saml/metadata | head -5
 # Ответ: XML с EntityDescriptor
 
 # 2. SAML endpoint Keycloak доступен?
-curl -sf "https://openedu.urfu.ru/auth/realms/urfu/protocol/saml/clients/zammad-help" | head -5
+curl -sf "https://openedu.urfu.ru/auth/realms/master/protocol/saml/clients/zammad-help" | head -5
 # Ответ: HTML-форма или редирект на логин
 ```
 

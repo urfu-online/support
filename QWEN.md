@@ -59,7 +59,7 @@
 ```
 
 ### Внешние интеграции
-- **Keycloak**: `openedu.urfu.ru/auth/realms/urfu` — SSO аутентификация (OIDC)
+- **Keycloak**: `openedu.urfu.ru/auth/realms/master` — SSO аутентификация (OIDC)
 - **Почта**: IMAP/SMTP через `mail.openedu.urfu.ru` / `smtp.openedu.urfu.ru`
 - **Платформа**: Caddy proxy, Loki (логи), Prometheus (метрики), Restic (бэкапы)
 
@@ -164,7 +164,7 @@ docker compose config          # Проверка конфигурации
 | `REDIS_URL` | URL Redis | `redis://redis:6379` |
 | `ES_URL` | URL Elasticsearch | `http://elasticsearch:9200` |
 | `KEYCLOAK_URL` | URL Keycloak | `https://openedu.urfu.ru/auth` |
-| `KEYCLOAK_REALM` | Realm Keycloak | `urfu` |
+| `KEYCLOAK_REALM` | Realm Keycloak | `master` |
 | `KEYCLOAK_CLIENT_ID` | Client ID Keycloak | `zammad-help` |
 | `KEYCLOAK_CLIENT_SECRET` | Client Secret | (из Keycloak) |
 | `EMAIL_IMAP_*` | Настройки входящей почты | — |

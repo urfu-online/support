@@ -100,7 +100,7 @@ EMAIL_SMTP_PASSWORD=<пароль>
 
 # Keycloak
 KEYCLOAK_URL=https://openedu.urfu.ru/auth
-KEYCLOAK_REALM=urfu
+KEYCLOAK_REALM=master
 KEYCLOAK_CLIENT_ID=zammad-help
 KEYCLOAK_CLIENT_SECRET=<из Keycloak>
 ```
@@ -110,7 +110,7 @@ KEYCLOAK_CLIENT_SECRET=<из Keycloak>
 #### 2.1. Создание клиента
 
 1. Войти в админ-панель Keycloak
-2. Выбрать realm `urfu`
+2. Выбрать realm `master`
 3. Создать клиент:
    - **Client ID**: `zammad-help`
    - **Client protocol**: `openid-connect`
@@ -197,7 +197,7 @@ curl -X POST https://help.openedu.urfu.ru/api/v1/channels_oidc \
   -H "Content-Type: application/json" \
   -d '{
     "name": "Keycloak URFU",
-    "issuer": "https://openedu.urfu.ru/auth/realms/urfu",
+    "issuer": "https://openedu.urfu.ru/auth/realms/master",
     "client_id": "zammad-help",
     "client_secret": "<CLIENT_SECRET>",
     "scope": "openid email profile",
@@ -377,10 +377,10 @@ curl -X DELETE http://localhost:9200/zammad_tickets
 
 ```bash
 # Проверить клиент
-curl -s https://openedu.urfu.ru/auth/realms/urfu/.well-known/openid-configuration
+curl -s https://openedu.urfu.ru/auth/realms/master/.well-known/openid-configuration
 
 # Проверить токен
-curl -X POST https://openedu.urfu.ru/auth/realms/urfu/protocol/openid-connect/token \
+curl -X POST https://openedu.urfu.ru/auth/realms/master/protocol/openid-connect/token \
   -d "client_id=zammad-help" \
   -d "client_secret=<SECRET>" \
   -d "grant_type=client_credentials"

@@ -2,7 +2,7 @@
 
 **Дата:** 7 апреля 2026 г.
 **Версия Zammad:** 7.x
-**Keycloak:** `https://openedu.urfu.ru/auth/realms/urfu`
+**Keycloak:** `https://openedu.urfu.ru/auth/realms/master`
 
 ---
 
@@ -91,7 +91,7 @@
 ### 3.1. Создание OIDC клиента
 
 1. Войти в админ-панель Keycloak: `https://openedu.urfu.ru/auth/admin/`
-2. Выбрать realm **`urfu`**
+2. Выбрать realm **`master`**
 3. Перейти: **Clients** → **Create client**
 
 #### Основные настройки:
@@ -201,7 +201,7 @@
 # Clients → zammad-help → Credentials → Client Secret
 
 # Вариант 2: Через API Keycloak (если есть admin token)
-curl -s "https://openedu.urfu.ru/auth/admin/realms/urfu/clients" \
+curl -s "https://openedu.urfu.ru/auth/admin/realms/master/clients" \
   -H "Authorization: Bearer $ADMIN_TOKEN" \
   | jq '.[] | select(.clientId == "zammad-help") | .secret'
 ```
@@ -235,7 +235,7 @@ curl -X POST https://help.openedu.urfu.ru/api/v1/channels_oidc \
   -H "Content-Type: application/json" \
   -d '{
     "name": "Keycloak URFU",
-    "issuer": "https://openedu.urfu.ru/auth/realms/urfu",
+    "issuer": "https://openedu.urfu.ru/auth/realms/master",
     "client_id": "zammad-help",
     "client_secret": "<CLIENT_SECRET>",
     "scope": "openid email profile groups",
@@ -252,7 +252,7 @@ curl -s https://help.openedu.urfu.ru/api/v1/channels_oidc \
   -H "Authorization: Token token=$TOKEN" | jq .
 
 # Протестировать OIDC discovery
-curl -s https://openedu.urfu.ru/auth/realms/urfu/.well-known/openid-configuration \
+curl -s https://openedu.urfu.ru/auth/realms/master/.well-known/openid-configuration \
   | jq '.issuer, .authorization_endpoint, .token_endpoint'
 ```
 
@@ -308,7 +308,7 @@ curl -s https://openedu.urfu.ru/auth/realms/urfu/.well-known/openid-configuratio
 | Шаг | Описание |
 |-----|----------|
 | 1-3 | Пользователь заходит на `help.openedu.urfu.ru`. Caddy проверяет сессию — если нет, редиректит на Keycloak |
-| 4-5 | Keycloak показывает страницу входа realm `urfu` |
+| 4-5 | Keycloak показывает страницу входа realm `master` |
 | 6-7 | Пользователь вводит логин/пароль (или через другой провайдер). Keycloak возвращает JWT-токен |
 | 8-9 | Браузер возвращается на Zammad с кодом авторизации. Zammad обменивает код на токен |
 | 10-11 | Zammad валидирует токен у Keycloak, получает информацию о пользователе |
@@ -449,11 +449,11 @@ GROUP_MAPPING = {
 
 ```bash
 # 1. Проверка OIDC discovery
-curl -sf https://openedu.urfu.ru/auth/realms/urfu/.well-known/openid-configuration | jq '.issuer'
-# Ожидание: "https://openedu.urfu.ru/auth/realms/urfu"
+curl -sf https://openedu.urfu.ru/auth/realms/master/.well-known/openid-configuration | jq '.issuer'
+# Ожидание: "https://openedu.urfu.ru/auth/realms/master"
 
 # 2. Получение токена (проверка клиента)
-curl -s -X POST "https://openedu.urfu.ru/auth/realms/urfu/protocol/openid-connect/token" \
+curl -s -X POST "https://openedu.urfu.ru/auth/realms/master/protocol/openid-connect/token" \
   -d "client_id=zammad-help" \
   -d "client_secret=<CLIENT_SECRET>" \
   -d "grant_type=client_credentials" \
@@ -461,7 +461,7 @@ curl -s -X POST "https://openedu.urfu.ru/auth/realms/urfu/protocol/openid-connec
 # Ожидание: JWT-токен
 
 # 3. Проверка состава токена (groups claim)
-TOKEN=$(curl -s -X POST "https://openedu.urfu.ru/auth/realms/urfu/protocol/openid-connect/token" \
+TOKEN=$(curl -s -X POST "https://openedu.urfu.ru/auth/realms/master/protocol/openid-connect/token" \
   -d "client_id=zammad-help" \
   -d "client_secret=<CLIENT_SECRET>" \
   -d "grant_type=client_credentials" \
@@ -549,7 +549,7 @@ curl -X PUT "https://help.openedu.urfu.ru/api/v1/channels_oidc/<ID>" \
 
 ### Keycloak (администратор Keycloak)
 
-- [ ] Создан клиент `zammad-help` в realm `urfu`
+- [ ] Создан клиент `zammad-help` в realm `master`
 - [ ] Тип клиента: `confidential`
 - [ ] Redirect URI: `https://help.openedu.urfu.ru/auth/callback`
 - [ ] Post logout URI: `https://help.openedu.urfu.ru`

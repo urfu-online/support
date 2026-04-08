@@ -190,7 +190,7 @@ zammad_users
 **Конфигурация:**
 - Provider: OpenID Connect
 - Realm: `urfu`
-- Issuer: `https://openedu.urfu.ru/auth/realms/urfu`
+- Issuer: `https://openedu.urfu.ru/auth/realms/master`
 - Client ID: `zammad-help`
 - Redirect URI: `https://help.openedu.urfu.ru/auth/callback`
 

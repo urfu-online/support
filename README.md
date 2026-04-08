@@ -143,7 +143,7 @@ services/public/support/
 
 ### Аутентификация
 
-Внешний Keycloak: `openedu.urfu.ru/auth/realms/urfu`
+Внешний Keycloak: `openedu.urfu.ru/auth/realms/master`
 
 ### Маршрутизация
 

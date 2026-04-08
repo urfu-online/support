@@ -8,7 +8,7 @@
 
 ## Часть 1. Keycloak — создание клиента
 
-**URL:** `https://openedu.urfu.ru/auth/admin/` → realm **`urfu`**
+**URL:** `https://openedu.urfu.ru/auth/admin/` → realm **`master`**
 
 ### Шаг 1. Создать клиент
 
@@ -101,7 +101,7 @@ curl -s -X POST https://help.openedu.urfu.ru/api/v1/channels_oidc \
   -H "Content-Type: application/json" \
   -d '{
     "name": "Keycloak URFU",
-    "issuer": "https://openedu.urfu.ru/auth/realms/urfu",
+    "issuer": "https://openedu.urfu.ru/auth/realms/master",
     "client_id": "zammad-help",
     "client_secret": "<CLIENT_SECRET>",
     "scope": "openid email profile",
@@ -119,7 +119,7 @@ curl -s -X POST https://help.openedu.urfu.ru/api/v1/channels_oidc \
 | Поле | Значение |
 |------|----------|
 | **Name** | `Keycloak URFU` |
-| **Issuer** | `https://openedu.urfu.ru/auth/realms/urfu` |
+| **Issuer** | `https://openedu.urfu.ru/auth/realms/master` |
 | **Client ID** | `zammad-help` |
 | **Client Secret** | `<из шага 1.4>` |
 | **Scopes** | `openid email profile` |
@@ -133,11 +133,11 @@ curl -s -X POST https://help.openedu.urfu.ru/api/v1/channels_oidc \
 
 ```bash
 # 1. OIDC discovery работает?
-curl -sf https://openedu.urfu.ru/auth/realms/urfu/.well-known/openid-configuration | jq '.issuer'
-# Ответ: "https://openedu.urfu.ru/auth/realms/urfu"
+curl -sf https://openedu.urfu.ru/auth/realms/master/.well-known/openid-configuration | jq '.issuer'
+# Ответ: "https://openedu.urfu.ru/auth/realms/master"
 
 # 2. Клиент валиден?
-curl -s -X POST "https://openedu.urfu.ru/auth/realms/urfu/protocol/openid-connect/token" \
+curl -s -X POST "https://openedu.urfu.ru/auth/realms/master/protocol/openid-connect/token" \
   -d "client_id=zammad-help" \
   -d "client_secret=<CLIENT_SECRET>" \
   -d "grant_type=client_credentials" | jq '.access_token'

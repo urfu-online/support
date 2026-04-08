@@ -4,7 +4,11 @@
       "Bash(chmod *)",
       "Bash(docker compose config *)",
       "Bash(sed *)",
-      "Bash(git add *)"
+      "Bash(git add *)",
+      "Bash(gh *)",
+      "Bash(curl *)",
+      "Bash(git commit *)",
+      "Bash(grep *)"
     ]
   },
   "$version": 3
