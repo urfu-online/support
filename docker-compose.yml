@@ -18,6 +18,11 @@ x-zammad-common: &zammad-common
     - POSTGRESQL_DB_CREATE=true
     - REDIS_URL=${REDIS_URL:-redis://redis:6379}
     - ES_URL=${ES_URL:-http://elasticsearch:9200}
+    - ELASTICSEARCH_HOST=elasticsearch
+    - ELASTICSEARCH_PORT=9200
+    - ELASTICSEARCH_SCHEMA=http
+    - ELASTICSEARCH_NAMESPACE=zammad
+    - ELASTICSEARCH_REINDEX=true
     - ZAMMAD_RAILS_SECRET=${ZAMMAD_RAILS_SECRET}
     - ZAMMAD_SESSION_SECRET=${ZAMMAD_SESSION_SECRET}
     - LOG_LEVEL=${LOG_LEVEL:-info}
