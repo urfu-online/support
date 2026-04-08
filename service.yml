@@ -14,10 +14,10 @@ visibility: public
 routing:
   - type: domain
     domain: help.openedu.urfu.ru
-    internal_port: 80
+    internal_port: 3000
   - type: domain
     domain: help.urfu.online
-    internal_port: 80
+    internal_port: 3000
 
 health:
   enabled: true
