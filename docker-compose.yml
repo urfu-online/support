@@ -64,18 +64,23 @@ services:
   zammad-worker:
     <<: *zammad-common
     container_name: support-zammad-worker
-    command: zammad-worker
+    command: ["zammad-scheduler"]
     depends_on:
-      - zammad-web
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
     volumes:
       - ./data/zammad/storage:/opt/zammad/storage
       - ./logs/zammad-worker:/opt/zammad/log:rw
     healthcheck:
-      test: ["CMD-SHELL", "pgrep -f 'sidekiq' > /dev/null 2>&1 || zammad execute System::StatusCheck 2>/dev/null"]
+      test: ["CMD-SHELL", "pgrep -f 'scheduler' > /dev/null 2>&1 || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 30s
+      start_period: 60s
     deploy:
       resources:
         limits:
