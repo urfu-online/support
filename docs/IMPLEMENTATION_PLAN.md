@@ -245,8 +245,8 @@ name: support
 display_name: "Техническая поддержка"
 version: "1.0.0"
 description: "Сервис технической поддержки пользователей на базе Zammad"
-maintainer: "support@urfu.ru"
-repository: "https://github.com/urfu/apps-service-opus/tree/main/services/public/support"
+maintainer: "support@openedu.urfu.ru"
+repository: "https://github.com/MasterGowen/support"
 tags:
   - helpdesk
   - production
