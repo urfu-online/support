@@ -25,12 +25,36 @@ x-zammad-common: &zammad-common
 
 services:
   # =============================================================================
+  # Zammad Init - инициализация БД (миграции, создание таблиц)
+  # Запускается один раз, завершается после выполнения
+  # =============================================================================
+  zammad-init:
+    <<: *zammad-common
+    container_name: support-zammad-init
+    command: ["zammad-init"]
+    restart: "no"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          memory: 1g
+          cpus: '0.5'
+
+  # =============================================================================
   # Zammad Web - основной веб-интерфейс и API
   # =============================================================================
   zammad-web:
     <<: *zammad-common
     container_name: support-zammad-web
     depends_on:
+      zammad-init:
+        condition: service_completed_successfully
       postgres:
         condition: service_healthy
       redis:
@@ -66,6 +90,8 @@ services:
     container_name: support-zammad-worker
     command: ["zammad-scheduler"]
     depends_on:
+      zammad-init:
+        condition: service_completed_successfully
       postgres:
         condition: service_healthy
       redis:
