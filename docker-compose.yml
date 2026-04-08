@@ -63,6 +63,7 @@ services:
   zammad-web:
     <<: *zammad-common
     container_name: support-zammad-web
+    command: ["zammad-railsserver"]
     depends_on:
       zammad-init:
         condition: service_completed_successfully
@@ -79,10 +80,10 @@ services:
       - "platform.service=support"
       - "platform.visibility=public"
       - "prometheus.scrape=true"
-      - "prometheus.port=80"
+      - "prometheus.port=3000"
       - "prometheus.path=/metrics"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:80/api/v1/status"]
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/v1/status"]
       interval: 30s
       timeout: 10s
       retries: 3
