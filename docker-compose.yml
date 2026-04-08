@@ -16,7 +16,7 @@ x-zammad-common: &zammad-common
     - ZAMMAD_SESSION_SECRET=${ZAMMAD_SESSION_SECRET}
     - LOG_LEVEL=${LOG_LEVEL:-info}
   volumes:
-    - ./data/zammad/data:/opt/zammad
+    - zammad_data:/opt/zammad
   networks:
     - platform
   logging:
@@ -40,7 +40,7 @@ services:
       elasticsearch:
         condition: service_healthy
     volumes:
-      - ./data/zammad/data:/opt/zammad
+      - zammad_data:/opt/zammad
       - ./logs/zammad:/opt/zammad/log:rw
     labels:
       - "platform.service=support"
@@ -70,7 +70,7 @@ services:
     depends_on:
       - zammad-web
     volumes:
-      - ./data/zammad/data:/opt/zammad
+      - zammad_data:/opt/zammad
       - ./logs/zammad-worker:/opt/zammad/log:rw
     healthcheck:
       test: ["CMD-SHELL", "pgrep -f 'sidekiq' > /dev/null 2>&1 || zammad execute System::StatusCheck 2>/dev/null"]
@@ -184,6 +184,9 @@ services:
         limits:
           memory: 2g
           cpus: '1.0'
+
+volumes:
+  zammad_data:
 
 networks:
   platform:

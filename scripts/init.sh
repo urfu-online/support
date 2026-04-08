@@ -36,7 +36,6 @@ echo "[*] Создание директорий для данных..."
 mkdir -p "$SERVICE_DIR"/data/postgres/data "$SERVICE_DIR"/data/postgres/init
 mkdir -p "$SERVICE_DIR"/data/redis/data
 mkdir -p "$SERVICE_DIR"/data/elasticsearch/data
-mkdir -p "$SERVICE_DIR"/data/zammad/data
 mkdir -p "$SERVICE_DIR"/logs/zammad "$SERVICE_DIR"/logs/zammad-worker
 chmod -R 755 "$SERVICE_DIR"/data "$SERVICE_DIR"/logs
 
