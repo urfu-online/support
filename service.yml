@@ -3,7 +3,7 @@ display_name: "Техническая поддержка"
 version: "1.0.0"
 description: "Сервис технической поддержки пользователей на базе Zammad"
 maintainer: "support@openedu.urfu.ru"
-repository: "https://github.com/MasterGowen/support"
+repository: "https://github.com/urfu-online/support"
 tags:
   - helpdesk
   - production
