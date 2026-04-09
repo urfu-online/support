@@ -21,7 +21,7 @@ routing:
 
 health:
   enabled: true
-  endpoint: /api/v1/status
+  endpoint: /
   interval: 30s
   timeout: 10s
   retries: 3
