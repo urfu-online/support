@@ -15,7 +15,7 @@
 ### Домены
 
 | Домен | Назначение |
-|-------|------------|
+| ------- | ------------ |
 | `help.openedu.urfu.ru` | Основной домен |
 | `help.urfu.online` | Обратная совместимость |
 
@@ -25,7 +25,7 @@
 
 ### 2.1. Компоненты системы
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────┐
 │                    Platform Caddy Proxy                     │
 │              (маршрутизация с help.openedu.urfu.ru)         │
@@ -56,7 +56,7 @@
 ### 2.2. Технологический стек
 
 | Компонент | Версия | Назначение |
-|-----------|--------|------------|
+| ----------- | -------- | ------------ |
 | **Zammad** | 7.x | Helpdesk система |
 | **PostgreSQL** | 15 | Основное хранилище данных |
 | **Redis** | 7 | Кэш, очереди, real-time уведомления |
@@ -65,7 +65,7 @@
 
 ### 2.3. Внутренняя архитектура Zammad
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────┐
 │                      Zammad Rails App                       │
 │                                                             │
@@ -151,7 +151,7 @@ overviews
 
 ### 3.2. Индексы Elasticsearch
 
-```
+```text
 zammad_tickets
 ├── id (keyword)
 ├── title (text + keyword)
@@ -177,7 +177,7 @@ zammad_users
 
 ### 4.1. Аутентификация (Keycloak)
 
-```
+```text
 ┌──────────┐     ┌─────────────┐     ┌──────────┐
 │  Client  │────▶│   Keycloak  │────▶│  Zammad  │
 │ (Browser)│     │ (OAuth2/OIDC)│     │          │
@@ -188,6 +188,7 @@ zammad_users
 ```
 
 **Конфигурация:**
+
 - Provider: OpenID Connect
 - Realm: `urfu`
 - Issuer: `https://openedu.urfu.ru/auth/realms/master`
@@ -196,7 +197,7 @@ zammad_users
 
 ### 4.2. Email-каналы
 
-```
+```text
 ┌──────────┐     ┌─────────────┐     ┌──────────┐
 │  Email   │────▶│   Zammad    │────▶│  Ticket  │
 │  (IMAP)  │     │  Email Box  │     │  Create  │
@@ -204,18 +205,20 @@ zammad_users
 ```
 
 **Входящая почта:**
+
 - Protocol: IMAP
 - Server: `mail.openedu.urfu.ru:993` (SSL)
 - Mailbox: `support@openedu.urfu.ru`
 
 **Исходящая почта:**
+
 - Protocol: SMTP
 - Server: `smtp.openedu.urfu.ru:587` (STARTTLS)
 
 ### 4.3. Платформенные интеграции
 
 | Интеграция | Компонент | Описание |
-|------------|-----------|----------|
+| ------------ | ----------- | ---------- |
 | **Caddy Proxy** | Platform | Маршрутизация, SSL, rate limiting |
 | **Keycloak** | External | SSO аутентификация |
 | **Restic Backup** | `_core/backup` | Ежедневные бэкапы |
@@ -229,7 +232,7 @@ zammad_users
 ### 5.1. Лимиты контейнеров
 
 | Сервис | CPU Limit | Memory Limit |
-|--------|-----------|--------------|
+| -------- | ----------- | -------------- |
 | `zammad-web` | 1.0 | 2Gi |
 | `zammad-worker` | 0.5 | 1Gi |
 | `postgres` | 0.5 | 1Gi |
@@ -238,7 +241,7 @@ zammad_users
 
 ### 5.2. Elasticsearch Heap
 
-```
+```text
 # config/elasticsearch/jvm.options
 -Xms2g
 -Xmx2g
@@ -291,7 +294,7 @@ zammad-worker:
 ### 7.2. Вертикальное масштабирование
 
 | Компонент | Min | Recommended | Max |
-|-----------|-----|-------------|-----|
+| ----------- | ----- | ------------- | ----- |
 | RAM (всего) | 4 ГБ | 8 ГБ | 16 ГБ |
 | CPU (всего) | 2 ядра | 4 ядра | 8 ядер |
 | Диск (данные) | 20 ГБ | 50 ГБ | 200 ГБ |
