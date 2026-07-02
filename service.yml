@@ -15,9 +15,11 @@ routing:
   - type: domain
     domain: help.openedu.urfu.ru
     internal_port: 3000
+    container_name: support-zammad-web
   - type: domain
     domain: help.urfu.online
     internal_port: 3000
+    container_name: support-zammad-web
 
 health:
   enabled: true

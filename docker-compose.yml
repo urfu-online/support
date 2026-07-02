@@ -8,6 +8,7 @@ x-zammad-common: &zammad-common
   image: zammad/zammad:7
   restart: unless-stopped
   environment:
+    - RAILS_SERVE_STATIC_FILES=true
     - RAILS_ENV=production
     - DATABASE_URL=postgresql://${POSTGRES_USER:-zammad}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-zammad}?pool=50
     - POSTGRESQL_HOST=postgres
@@ -28,7 +29,7 @@ x-zammad-common: &zammad-common
     - ZAMMAD_SESSION_SECRET=${ZAMMAD_SESSION_SECRET}
     - LOG_LEVEL=${LOG_LEVEL:-info}
   networks:
-    - platform
+    - platform_network
   logging:
     driver: "local"
     options:
@@ -142,7 +143,7 @@ services:
       - ./data/postgres/data:/var/lib/postgresql/data
       - ./data/postgres/init:/docker-entrypoint-initdb.d:ro
     networks:
-      - platform
+      - platform_network
     logging:
       driver: "local"
       options:
@@ -171,7 +172,7 @@ services:
     volumes:
       - ./data/redis/data:/data
     networks:
-      - platform
+      - platform_network
     logging:
       driver: "local"
       options:
@@ -209,7 +210,7 @@ services:
       - ./data/elasticsearch/data:/usr/share/elasticsearch/data
       - ./config/elasticsearch/jvm.options:/usr/share/elasticsearch/config/jvm.options:ro
     networks:
-      - platform
+      - platform_network
     logging:
       driver: "local"
       options:
@@ -228,6 +229,6 @@ services:
           cpus: '1.0'
 
 networks:
-  platform:
+  platform_network:
     external: true
     name: platform_network
