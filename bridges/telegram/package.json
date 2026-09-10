@@ -1,0 +1,24 @@
+{
+  "name": "@support/telegram-bridge",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/index.js"
+  },
+  "dependencies": {
+    "@support/bridge-shared": "file:../shared",
+    "express": "^4.21.2",
+    "grammy": "^1.35.0",
+    "https-proxy-agent": "^7.0.6",
+    "node-fetch": "^2.7.0",
+    "socks-proxy-agent": "^8.0.5"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^22.10.0",
+    "@types/node-fetch": "^2.6.12",
+    "typescript": "^5.7.2"
+  }
+}

@@ -228,6 +228,150 @@ services:
           memory: 2g
           cpus: '1.0'
 
+  # =============================================================================
+  # Channel bridges (Max / VK / Telegram) — optional profiles
+  # Enable: docker compose --profile max --profile vk --profile telegram up -d
+  # =============================================================================
+  max-bridge:
+    profiles: ["max"]
+    build:
+      context: ./bridges
+      dockerfile: max/Dockerfile
+    container_name: support-max-bridge
+    restart: unless-stopped
+    environment:
+      - PORT=8080
+      - HTTP_PATH_PREFIX=/bridges/max
+      - REDIS_URL=${REDIS_URL:-redis://redis:6379}
+      - ZAMMAD_URL=${ZAMMAD_URL:-http://zammad-web:3000}
+      - ZAMMAD_TOKEN=${ZAMMAD_TOKEN}
+      - ZAMMAD_GROUP_ID=${ZAMMAD_GROUP_ID:-1}
+      - BRIDGE_OUTBOUND_SECRET=${BRIDGE_OUTBOUND_SECRET}
+      - MAX_BOT_TOKEN=${MAX_BOT_TOKEN}
+      - MAX_API_BASE=${MAX_API_BASE:-https://platform-api2.max.ru}
+      - MAX_WEBHOOK_URL=${MAX_WEBHOOK_URL:-https://help.openedu.urfu.ru/bridges/max/webhook}
+      - MAX_WEBHOOK_SECRET=${MAX_WEBHOOK_SECRET:-}
+      - MAX_WELCOME_MESSAGE=${MAX_WELCOME_MESSAGE:-}
+      - BRIDGE_END_CLOSES_TICKET=${BRIDGE_END_CLOSES_TICKET:-true}
+      - BRIDGE_GOODBYE_MESSAGE=${BRIDGE_GOODBYE_MESSAGE:-}
+      - TICKET_TITLE_PREFIX=MAX
+    depends_on:
+      redis:
+        condition: service_healthy
+      zammad-web:
+        condition: service_healthy
+    networks:
+      - platform_network
+    logging:
+      driver: "local"
+      options:
+        max-size: "50m"
+        max-file: "3"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:8080/health >/dev/null || wget -qO- http://127.0.0.1:8080/bridges/max/health >/dev/null"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+    deploy:
+      resources:
+        limits:
+          memory: 256m
+          cpus: '0.25'
+
+  vk-bridge:
+    profiles: ["vk"]
+    build:
+      context: ./bridges
+      dockerfile: vk/Dockerfile
+    container_name: support-vk-bridge
+    restart: unless-stopped
+    environment:
+      - PORT=8080
+      - HTTP_PATH_PREFIX=/bridges/vk
+      - REDIS_URL=${REDIS_URL:-redis://redis:6379}
+      - ZAMMAD_URL=${ZAMMAD_URL:-http://zammad-web:3000}
+      - ZAMMAD_TOKEN=${ZAMMAD_TOKEN}
+      - ZAMMAD_GROUP_ID=${ZAMMAD_GROUP_ID:-1}
+      - BRIDGE_OUTBOUND_SECRET=${BRIDGE_OUTBOUND_SECRET}
+      - VK_GROUP_TOKEN=${VK_GROUP_TOKEN}
+      - VK_GROUP_ID=${VK_GROUP_ID}
+      - VK_CONFIRMATION=${VK_CONFIRMATION}
+      - VK_CALLBACK_SECRET=${VK_CALLBACK_SECRET:-}
+      - VK_WELCOME_MESSAGE=${VK_WELCOME_MESSAGE:-}
+      - BRIDGE_END_CLOSES_TICKET=${BRIDGE_END_CLOSES_TICKET:-true}
+      - BRIDGE_GOODBYE_MESSAGE=${BRIDGE_GOODBYE_MESSAGE:-}
+      - TICKET_TITLE_PREFIX=VK
+    depends_on:
+      redis:
+        condition: service_healthy
+      zammad-web:
+        condition: service_healthy
+    networks:
+      - platform_network
+    logging:
+      driver: "local"
+      options:
+        max-size: "50m"
+        max-file: "3"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:8080/health >/dev/null || wget -qO- http://127.0.0.1:8080/bridges/vk/health >/dev/null"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+    deploy:
+      resources:
+        limits:
+          memory: 256m
+          cpus: '0.25'
+
+  telegram-bridge:
+    profiles: ["telegram"]
+    build:
+      context: ./bridges
+      dockerfile: telegram/Dockerfile
+    container_name: support-telegram-bridge
+    restart: unless-stopped
+    environment:
+      - PORT=8080
+      - HTTP_PATH_PREFIX=/bridges/telegram
+      - REDIS_URL=${REDIS_URL:-redis://redis:6379}
+      - ZAMMAD_URL=${ZAMMAD_URL:-http://zammad-web:3000}
+      - ZAMMAD_TOKEN=${ZAMMAD_TOKEN}
+      - ZAMMAD_GROUP_ID=${ZAMMAD_GROUP_ID:-1}
+      - BRIDGE_OUTBOUND_SECRET=${BRIDGE_OUTBOUND_SECRET}
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - TELEGRAM_PROXY=${TELEGRAM_PROXY:-}
+      - HTTPS_PROXY=${TELEGRAM_PROXY:-}
+      - HTTP_PROXY=${TELEGRAM_PROXY:-}
+      - NO_PROXY=postgres,redis,elasticsearch,zammad-web,localhost,127.0.0.1
+      - TELEGRAM_WELCOME_MESSAGE=${TELEGRAM_WELCOME_MESSAGE:-}
+      - TICKET_TITLE_PREFIX=TG
+    depends_on:
+      redis:
+        condition: service_healthy
+      zammad-web:
+        condition: service_healthy
+    networks:
+      - platform_network
+    logging:
+      driver: "local"
+      options:
+        max-size: "50m"
+        max-file: "3"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:8080/health >/dev/null || wget -qO- http://127.0.0.1:8080/bridges/telegram/health >/dev/null"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          memory: 256m
+          cpus: '0.25'
+
 networks:
   platform_network:
     external: true

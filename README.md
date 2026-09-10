@@ -47,6 +47,9 @@
 | [IMPLEMENTATION_PLAN.md](./docs/IMPLEMENTATION_PLAN.md) | План реализации по этапам |
 | [DEPLOYMENT.md](./docs/DEPLOYMENT.md) | Руководство по развёртыванию |
 | [MAINTENANCE.md](./docs/MAINTENANCE.md) | Обслуживание и мониторинг |
+| [UPGRADE.md](./docs/UPGRADE.md) | Безопасное обновление Zammad |
+| [CHANNELS_BRIDGES.md](./docs/CHANNELS_BRIDGES.md) | Bridge Max / VK / Telegram |
+| [TELEGRAM_BYPASS.md](./docs/TELEGRAM_BYPASS.md) | Telegram при блокировке Bot API |
 
 ## 🚀 Быстрый старт
 
@@ -96,7 +99,15 @@ services/public/support/
 │   ├── ARCHITECTURE.md
 │   ├── IMPLEMENTATION_PLAN.md
 │   ├── DEPLOYMENT.md
-│   └── MAINTENANCE.md
+│   ├── MAINTENANCE.md
+│   ├── UPGRADE.md
+│   ├── CHANNELS_BRIDGES.md
+│   └── TELEGRAM_BYPASS.md
+├── bridges/                    # Channel bridges (Max / VK / Telegram)
+│   ├── shared/
+│   ├── max/
+│   ├── vk/
+│   └── telegram/
 ├── config/                     # Конфигурация
 │   └── elasticsearch/
 │       └── jvm.options         # Настройки памяти ES (1.5Gi heap)

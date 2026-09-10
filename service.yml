@@ -20,6 +20,23 @@ routing:
     domain: help.urfu.online
     internal_port: 3000
     container_name: support-zammad-web
+  # Bridge webhooks (path-based). Platform Caddy must route these prefixes
+  # to the bridge containers without sending them to zammad-web.
+  - type: path
+    domain: help.openedu.urfu.ru
+    path_prefix: /bridges/max
+    internal_port: 8080
+    container_name: support-max-bridge
+  - type: path
+    domain: help.openedu.urfu.ru
+    path_prefix: /bridges/vk
+    internal_port: 8080
+    container_name: support-vk-bridge
+  - type: path
+    domain: help.openedu.urfu.ru
+    path_prefix: /bridges/telegram
+    internal_port: 8080
+    container_name: support-telegram-bridge
 
 health:
   enabled: true

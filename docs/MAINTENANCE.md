@@ -310,33 +310,9 @@ ops up support
 
 ## Обновление версий
 
-### Обновление Zammad
+Полная пошаговая инструкция без потери данных: **[UPGRADE.md](./UPGRADE.md)**.
 
-```bash
-# Проверить доступную версию
-docker pull zammad/zammad:latest
-
-# Остановить сервис
-ops down support
-
-# Обновить docker-compose.yml (указать новую версию)
-# image: zammad/zammad:7.1
-
-# Запустить
-ops up support
-
-# Проверить версию
-curl https://help.openedu.urfu.ru/api/v1/system_status | jq .version
-```
-
-### Миграция данных
-
-```bash
-# Zammad автоматически выполняет миграции при старте
-# Проверить логи миграции
-docker compose logs zammad-web | grep -i migrate
-```
-
+Кратко: бэкап → пин конкретного тега образа (не плавающий `:7`) → `zammad-init` → `up -d` → проверки → при необходимости `zammad:searchindex:rebuild`. Откат — старый тег или restore из бэкапа.
 ---
 
 ## Безопасность

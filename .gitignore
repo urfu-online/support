@@ -43,3 +43,7 @@ backups/
 # Testing
 coverage/
 .tmp/
+
+# Bridge Node builds
+bridges/**/node_modules/
+bridges/**/dist/
