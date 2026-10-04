@@ -9,10 +9,14 @@ export type SendToMessenger = (
   attachments?: BridgeAttachment[],
 ) => Promise<void>;
 
-function extractTicketId(payload: OutboundPayload): number | null {
-  if (typeof payload.ticket_id === 'number') return payload.ticket_id;
-  if (payload.ticket && typeof payload.ticket.id === 'number') return payload.ticket.id;
+function asId(value: unknown): number | null {
+  if (typeof value === 'number' && Number.isInteger(value)) return value;
+  if (typeof value === 'string' && /^[0-9]+$/.test(value)) return Number(value);
   return null;
+}
+
+function extractTicketId(payload: OutboundPayload): number | null {
+  return asId(payload.ticket_id) ?? asId(payload.ticket?.id);
 }
 
 function extractArticle(payload: OutboundPayload): OutboundPayload['article'] | undefined {
@@ -23,7 +27,8 @@ function extractArticle(payload: OutboundPayload): OutboundPayload['article'] | 
 }
 
 function isAgentPublicReply(article: NonNullable<OutboundPayload['article']>): boolean {
-  if (article.internal === true) return false;
+  const internal = article.internal as unknown;
+  if (internal === true || internal === 'true') return false;
   const sender = (article.sender ?? '').toLowerCase();
   if (sender && sender !== 'agent') return false;
   const hasBody = Boolean(article.body && article.body.trim());
